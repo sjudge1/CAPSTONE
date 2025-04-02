@@ -14,17 +14,14 @@ void main() {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Terpiez',
-      // Simple light theme with Material 3
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
       ),
-      
       home: const MyHomeScreen(),
     );
   }
@@ -32,15 +29,12 @@ class MyApp extends StatelessWidget {
 
 class MyHomeScreen extends StatefulWidget {
   const MyHomeScreen({super.key});
-
   @override
   State<MyHomeScreen> createState() => _MyHomeScreenState();
 }
 
 class _MyHomeScreenState extends State<MyHomeScreen> {
   int _selectedIndex = 0;
-
-  // The two pages to switch between
   final List<Widget> _pages = [
     HeartCalculator(),
     LungCalculator(),
@@ -52,7 +46,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
     _loadLastSelectedIndex();
   }
 
-  // Load the last selected index from SharedPreferences.
   Future<void> _loadLastSelectedIndex() async {
     final prefs = await SharedPreferences.getInstance();
     final index = prefs.getInt('lastSelectedIndex') ?? 0;
@@ -61,7 +54,6 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
     });
   }
 
-  // When the user taps a bottom nav item, update the index and save it.
   Future<void> _onItemTapped(int index) async {
     setState(() {
       _selectedIndex = index;
@@ -75,6 +67,17 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Heart-Lung Calculator'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HelpPage()),
+              );
+            },
+          ),
+        ],
       ),
       body: _pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
@@ -95,6 +98,35 @@ class _MyHomeScreenState extends State<MyHomeScreen> {
   }
 }
 
+
+class HelpPage extends StatelessWidget {
+  const HelpPage({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        automaticallyImplyLeading: false, // Remove the default back button
+        title: const Text('Help & Instructions'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context); // Close the HelpPage
+            },
+          ),
+        ],
+      ),
+      body: const Center(
+        child: Text(
+          'insert justification + disclaimer here (will be here after testing)',
+          style: TextStyle(fontSize: 16),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+}
 
 
 class HeartCalculator extends StatefulWidget {
@@ -193,7 +225,7 @@ class _HeartCalculatorState extends State<HeartCalculator> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Calculator'),
+        title: const Text('Heart Calculator'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -678,7 +710,6 @@ class _LungCalculatorState extends State<LungCalculator> {
 }
 
                          
-
 class HeartResults extends StatelessWidget {
   final int donorAge;
   final int donorWeight;
@@ -898,8 +929,14 @@ class HeartResults extends StatelessWidget {
                 ),
                 const SizedBox(height: 30),
                 // Graph image
-                const SizedBox(height: 30),
-                Image.asset('assets/images/heartgraph.png'),
+                Image.asset('assets/images/heartgraph2.png'),
+                const SizedBox(height: 10),
+                // Citation under the graph
+                const Text(
+                  'Ródenas-Alesina, E., Foroutan, F., Fan, C.-P., Stehlik, J., Bartlett, I., Tremblay-Gravel, M., Aleksova, N., Rao, V., Miller, R. J. H., Khush, K. K., Ross, H. J., & Moayedi, Y. (2023). Predicted heart mass: A tale of 2 Ventricles. Circulation: Heart Failure, 16(9). https://doi.org/10.1161/circheartfailure.120.008311',
+                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 30),
                 // Button to reset the calculator page
                 ElevatedButton(
@@ -923,6 +960,7 @@ class HeartResults extends StatelessWidget {
     );
   }
 }
+
 
 class LungResults extends StatelessWidget {
   final int donorHeight;    // in cm
@@ -964,7 +1002,20 @@ class LungResults extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Lung Results')),
+      appBar: AppBar(
+        title: const Text('Lung Results'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const HelpPage()),
+              );
+            },
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(15),
@@ -1080,6 +1131,13 @@ class LungResults extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 Image.asset('assets/images/relativerisknew.png'),
+                const SizedBox(height: 10),
+                // Citation below the graph
+                const Text(
+                  'Eberlein M, Reed RM, Maidaa M, Bolukbas S, Arnaoutakis GJ, Orens JB, Brower RG, Merlo CA, Hunsicker LG. Donor-recipient size matching and survival after lung transplantation. A cohort study. Ann Am Thorac Soc. 2013 Oct;10(5):418-25. doi: 10.1513/AnnalsATS.201301-008OC. PMID: 23988005.',
+                  style: TextStyle(fontSize: 12, fontStyle: FontStyle.italic),
+                  textAlign: TextAlign.center,
+                ),
                 const SizedBox(height: 30),
                 // Button to clear results and go back to the Lung Calculator page
                 ElevatedButton(
